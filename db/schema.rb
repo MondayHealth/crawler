@@ -16,9 +16,10 @@ ActiveRecord::Schema.define(version: 20170822191414) do
   enable_extension "plpgsql"
 
   create_table "plans", force: :cascade do |t|
-    t.integer  "provider_id", null: false
-    t.string   "name",        null: false
-    t.text     "url",         null: false
+    t.integer  "provider_id",  null: false
+    t.string   "name",         null: false
+    t.text     "url",          null: false
+    t.integer  "record_limit", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
