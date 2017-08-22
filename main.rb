@@ -1,32 +1,56 @@
-ENV['SSDB_HOST'] ||= "localhost"
-ENV['SSDB_PORT'] ||= "8888"
-ENV['SSDB_PASS'] ||= ""
-
 require 'headless'
+require 'redis-queue'
 require 'selenium-webdriver'
 require 'ssdb'
 
-PAGE_URL = 'http://www.aetna.com/dse/search?site_id=docfind&langpref=en&tabKey=tab1#markPage=clickedDistance&whyPressed=geo&searchQuery=All%20Behavioral%20Health%20Professionals&searchTypeMainTypeAhead=&searchTypeThrCol=byProvType&mainTypeAheadSelectionVal=&thrdColSelectedVal=All%20Behavioral%20Health%20Professionals&aetnaId=&Quicklastname=&Quickfirstname=&QuickZipcode=1019%5C9&QuickCoordinates=40.7427%2C-73.99340000000001&quickCategoryCode=&QuickGeoType=city&geoSearch=New%20York%20City%2C%20New%20York&geoMainTypeAheadLastQuickSelectedVal=New%20York%20City%2C%20New%20Yo%5Crk&geoBoxSearch=true&stateCode=NY&quickSearchTerm=&classificationLimit=&pcpSearchIndicator=&specSearchIndicator=&suppressFASTDocCall=true&linkwithoutplan=&publicPlan=AWMTS&displayPlan=%28NY%29%20Ae%5Ctna%20Whole%20Health%u2120%20-%20Mount%20Sinai%20Health%20Partners%20Plus&zip=&filterValues=&pagination=&radius=0&lastPageTravVal=&sendZipLimitInd=&site_id=docfind&sortOrder=distance&ioeqSelectionInd=&ioe_qType=&switchForStatePlanSelectionPopUp=&actualDisplayTerm=All%20Behavioral%20Health%20Professionals&withinMilesVal='
+require_relative 'defaults'
+require_relative 'environment'
 
-headless = Headless.new
-headless.start
-driver = Selenium::WebDriver.for :firefox
-driver.navigate.to PAGE_URL
-wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
-wait.until do
-  begin
-    driver.find_element(id: "pageNumbers")
-    true
-  rescue Selenium::WebDriver::Error::ServerError => e
-    unless e.message =~ /404/
-      raise e
+module Monday
+  class Crawler
+
+    def initialize
+      @headless = Headless.new
+      @headless.start
     end
+
+    def start options={}
+      Monday::Queue.queue.process do |message|
+        result = fetch message, options
+      end
+      destroy
+    end
+
+    def fetch url, options={}
+      @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
+      @ssdb = SSDB.new url: "ssdb://#{ENV['SSDB_HOST']}:#{ENV['SSDB_PORT']}"
+
+      # If the page has already been fetched, block unless we're force refreshing
+      unless options[:force_refresh]
+        return if @ssdb.exists(url)
+      end
+
+      @driver = Selenium::WebDriver.for :firefox
+      @driver.navigate.to url
+      @wait.until do
+        begin
+          @driver.find_element(id: "pageNumbers")
+          true
+        rescue Selenium::WebDriver::Error::ServerError => e
+          unless e.message =~ /404/
+            raise e
+          end
+        end
+      end
+      @ssdb.set(url, @driver.page_source)
+    end
+    
+    def destroy
+      @headless.destroy
+    end
+
   end
 end
 
-ssdb = SSDB.new url: "ssdb://#{ENV['SSDB_HOST']}:#{ENV['SSDB_PORT']}"
-ssdb.set(PAGE_URL, driver.page_source)
-
-puts ssdb.get(PAGE_URL)
-
-headless.destroy
+crawler = Monday::Crawler.new
+crawler.start

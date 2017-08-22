@@ -5,7 +5,12 @@ GEM
       ffi (~> 1.0, >= 1.0.11)
     ffi (1.9.18)
     headless (2.3.1)
+    hiredis (0.6.1)
     moneta (1.0.0)
+    redis (3.3.3)
+    redis-queue (0.0.4)
+      hiredis (~> 0.5, >= 0.5.2)
+      redis (~> 3.0, >= 3.0.4)
     rubyzip (1.2.1)
     selenium-webdriver (3.5.1)
       childprocess (~> 0.5)
@@ -18,6 +23,7 @@ PLATFORMS
 DEPENDENCIES
   headless
   moneta
+  redis-queue
   selenium-webdriver
   ssdb
 
