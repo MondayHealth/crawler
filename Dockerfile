@@ -22,4 +22,3 @@ WORKDIR /app
 COPY . ./
 
 RUN bundle install
-RUN bundle exec rake db:migrate
