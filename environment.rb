@@ -1,3 +1,9 @@
+require 'otr-activerecord'
+
+require_relative 'defaults'
+
+OTR::ActiveRecord.configure_from_file! "config/database.yml"
+
 module Monday
   class Queue
     def self.queue
@@ -5,4 +11,8 @@ module Monday
       @queue ||= Redis::Queue.new('q_crawler_urls','bp_q_crawler_urls',  :redis => @redis)
     end
   end
+end
+
+Dir[File.join("app", "**/*.rb")].each do |file_path|
+  require_relative file_path
 end
