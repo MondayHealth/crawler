@@ -1,8 +1,10 @@
-require 'otr-activerecord'
-
 require_relative 'defaults'
 
+require 'otr-activerecord'
+
 OTR::ActiveRecord.configure_from_file! "config/database.yml"
+
+require 'redis-queue'
 
 module Monday
   class Queue
