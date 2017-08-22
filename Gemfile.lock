@@ -6,11 +6,11 @@ GEM
     ffi (1.9.18)
     headless (2.3.1)
     moneta (1.0.0)
-    redis (3.3.3)
     rubyzip (1.2.1)
     selenium-webdriver (3.5.1)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
+    ssdb (0.1.0)
 
 PLATFORMS
   ruby
@@ -18,8 +18,8 @@ PLATFORMS
 DEPENDENCIES
   headless
   moneta
-  redis
   selenium-webdriver
+  ssdb
 
 BUNDLED WITH
    1.14.6

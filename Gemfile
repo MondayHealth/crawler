@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'redis'
+gem 'ssdb'
 gem 'headless'
 gem 'selenium-webdriver'
 gem 'moneta'
