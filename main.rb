@@ -22,7 +22,8 @@ module Monday
     end
 
     def fetch url, options={}
-      STDOUT.write("Fetching #{url}")
+      STDOUT.puts("Fetching #{url}")
+      STDOUT.flush
       @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
       @ssdb = SSDB.new url: "ssdb://#{ENV['SSDB_HOST']}:#{ENV['SSDB_PORT']}"
 
@@ -54,5 +55,6 @@ module Monday
 end
 
 crawler = Monday::Crawler.new
-STDOUT.write("Starting crawler...")
+STDOUT.puts("Starting crawler...")
+STDOUT.flush
 crawler.start
