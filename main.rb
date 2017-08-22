@@ -9,11 +9,6 @@ require_relative 'environment'
 module Monday
   class Crawler
 
-    def initialize
-      @headless = Headless.new
-      @headless.start
-    end
-
     def start options={}
       Monday::Queue.queue.process do |message|
         result = fetch message, options
@@ -32,23 +27,23 @@ module Monday
         return if @ssdb.exists(url)
       end
 
-      @driver = Selenium::WebDriver.for :firefox
-      @driver.navigate.to url
-      @wait.until do
-        begin
-          @driver.find_element(id: "pageNumbers")
-          true
-        rescue Selenium::WebDriver::Error::ServerError => e
-          unless e.message =~ /404/
-            raise e
+      page_source = nil
+      Headless.ly do
+        @driver = Selenium::WebDriver.for :firefox
+        @driver.navigate.to url
+        @wait.until do
+          begin
+            @driver.find_element(id: "pageNumbers")
+            true
+          rescue Selenium::WebDriver::Error::ServerError => e
+            unless e.message =~ /404/
+              raise e
+            end
           end
         end
+        page_source = @driver.page_source
       end
-      @ssdb.set(url, @driver.page_source)
-    end
-    
-    def destroy
-      @headless.destroy
+      @ssdb.set(url, page_source)
     end
 
   end
