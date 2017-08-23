@@ -1,5 +1,7 @@
 FROM ruby:2.4
 
+ARG private_gem_oauth_token
+
 USER root
 
 RUN apt-get update
@@ -21,4 +23,6 @@ ENV DISPLAY :10
 WORKDIR /app
 COPY . ./
 
-RUN bundle install
+ENV PRIVATE_GEM_OAUTH_TOKEN $private_gem_oauth_token
+
+RUN PRIVATE_GEM_OAUTH_TOKEN=$PRIVATE_GEM_OAUTH_TOKEN bundle install
