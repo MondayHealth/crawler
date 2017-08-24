@@ -2,6 +2,7 @@ require 'headless'
 require 'redis-queue'
 require 'selenium-webdriver'
 require 'ssdb'
+require 'json'
 
 require_relative 'defaults'
 require_relative 'environment'
@@ -11,14 +12,19 @@ module Monday
 
     def start options={}
       Monday::Queue.queue.process do |message|
-        result = fetch message, options
+        data = JSON.parse(message)
+        result = fetch data, options
       end
       destroy
     end
 
-    def fetch url, options={}
+    def fetch data, options={}
+      url = data["url"]
+      plan_id = data["plan_id"]
+
       STDOUT.puts("Fetching #{url}")
       STDOUT.flush
+      
       @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
       @ssdb = SSDB.new url: "ssdb://#{ENV['SSDB_HOST']}:#{ENV['SSDB_PORT']}"
 
@@ -46,6 +52,7 @@ module Monday
         page_source = @driver.page_source.gsub("\n", " ").gsub("\t", " ").gsub(/\s+/, " ")
       end
       @ssdb.set(url, page_source)
+      Resque.push('scraper_aetna', :class => 'Jobs::Scrapers::AetnaScraper', :args => [ plan_id, url ])
     end
 
   end

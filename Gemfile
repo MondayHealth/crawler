@@ -7,6 +7,7 @@ gem 'rake'
 
 gem 'ssdb'
 gem 'redis-queue'
+gem 'resque'
 
 gem 'headless'
 gem 'selenium-webdriver'
