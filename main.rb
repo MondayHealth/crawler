@@ -41,7 +41,9 @@ module Monday
             end
           end
         end
-        page_source = @driver.page_source
+        # we need to strip out tabs and newlines here since they mess with ssdb-rb's GET method
+        # might as well get rid of extra space characters while we're at it
+        page_source = @driver.page_source.gsub("\n", " ").gsub("\t", " ").gsub(/\s+/, " ")
       end
       @ssdb.set(url, page_source)
     end
