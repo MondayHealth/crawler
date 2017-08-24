@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "lib"))
 
 require "bundler/setup"
+require 'resque/tasks'
 load "tasks/otr-activerecord.rake"
 load "tasks/refresh.rake"
 
@@ -13,3 +14,5 @@ namespace :db do
     require_relative 'environment'
   end
 end
+
+task 'resque:setup' => 'db:environment'

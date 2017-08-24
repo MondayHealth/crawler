@@ -7,11 +7,7 @@ namespace :providers do
       strategy = plan.pagination_strategy
       current_url = plan.url
       while !strategy.hit_record_limit? current_url, plan.record_limit
-        data = {
-          plan_id: plan.id,
-          url: current_url
-        }
-        Monday::Queue.queue.push(data.to_json)
+        Resque.enqueue(Jobs::Crawlers::AetnaCrawler, plan.id, current_url)
         current_url = strategy.next_page(current_url)
       end
     end

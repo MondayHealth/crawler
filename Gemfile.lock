@@ -31,7 +31,6 @@ GEM
     hashie-forbidden_attributes (0.1.1)
       hashie (>= 3.0)
     headless (2.3.1)
-    hiredis (0.6.1)
     i18n (0.8.6)
     minitest (5.10.3)
     mono_logger (1.1.0)
@@ -47,9 +46,6 @@ GEM
     rake (12.0.0)
     redis (3.3.3)
     redis-namespace (1.5.3)
-      redis (~> 3.0, >= 3.0.4)
-    redis-queue (0.0.4)
-      hiredis (~> 0.5, >= 0.5.2)
       redis (~> 3.0, >= 3.0.4)
     resque (1.27.4)
       mono_logger (~> 1.0)
@@ -85,7 +81,6 @@ DEPENDENCIES
   otr-activerecord
   pg
   rake
-  redis-queue
   resque
   selenium-webdriver
   ssdb
