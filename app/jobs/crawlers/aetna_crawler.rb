@@ -33,6 +33,7 @@ module Jobs
           page_source = @driver.page_source.gsub("\n", " ").gsub("\t", " ").gsub(/\s+/, " ")
         end
         @ssdb.set(url, page_source)
+        STDOUT.puts("Enqueueing AetnaScraper with [#{plan.id}, #{current_url}]")
         Resque.push('scraper_aetna', :class => 'Jobs::Scrapers::AetnaScraper', :args => [plan_id, url])
       end
     end
