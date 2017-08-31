@@ -16,26 +16,41 @@ module Jobs
 
         page_source = nil
         Headless.ly do
+          begin
           @driver = Selenium::WebDriver.for :firefox
           @driver.navigate.to url
           @wait.until do
             begin
+              # Did we find any results?
               @driver.find_element(id: "pageNumbers")
               true
             rescue Selenium::WebDriver::Error::ServerError => e
               unless e.message =~ /404/
                 raise e
               end
+            rescue Selenium::WebDriver::Error::NoSuchElementError => e
+              # Are we on an empty results page?
+              @driver.find_element(id: "noResultsSection")
+              true
             end
           end
-          # we need to strip out tabs and newlines here since they mess with ssdb-rb's GET method
-          # might as well get rid of extra space characters while we're at it
-          page_source = @driver.page_source.gsub("\n", " ").gsub("\t", " ").gsub(/\s+/, " ")
+
+          begin
+            # Did we find any results?
+            @driver.find_element(id: "pageNumbers")
+
+            # we need to strip out tabs and newlines here since they mess with ssdb-rb's GET method
+            # might as well get rid of extra space characters while we're at it
+            page_source = @driver.page_source.gsub("\n", " ").gsub("\t", " ").gsub(/\s+/, " ")
+            @ssdb.set(url, page_source)
+
+            STDOUT.puts("Enqueueing AetnaScraper with [#{plan_id}, #{url}]")
+            Resque.push('scraper_aetna', :class => 'Jobs::Scrapers::AetnaScraper', :args => [plan_id, url])
+          rescue Selenium::WebDriver::Error::NoSuchElementError => e
+            STDOUT.puts("No results found for [#{plan_id}, #{url}]")
+          end
           @driver.quit
         end
-        @ssdb.set(url, page_source)
-        STDOUT.puts("Enqueueing AetnaScraper with [#{plan_id}, #{url}]")
-        Resque.push('scraper_aetna', :class => 'Jobs::Scrapers::AetnaScraper', :args => [plan_id, url])
       end
     end
   end
