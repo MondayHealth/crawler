@@ -16,8 +16,8 @@ module Jobs
 
         page_source = nil
         Headless.ly do
+          @driver = Selenium::WebDriver.for :firefox
           begin
-            @driver = Selenium::WebDriver.for :firefox
             @driver.navigate.to url
             @wait.until do
               begin
