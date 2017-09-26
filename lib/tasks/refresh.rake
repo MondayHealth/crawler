@@ -1,13 +1,13 @@
 require 'json'
 
-namespace :providers do
+namespace :payors do
   namespace :refresh do
-    desc "Refreshes providers with a full crawl"
+    desc "Refreshes payors with a full crawl"
     task :crawl => ['db:environment'] do
       refresh('Jobs::Crawlers::AetnaCrawler', 'crawler_aetna')
     end
 
-    desc "Refreshes providers with cached data"
+    desc "Refreshes payors with cached data"
     task :scrape => ['db:environment'] do
       refresh('Jobs::Scrapers::AetnaScraper', 'scraper_aetna')
     end
