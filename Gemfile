@@ -10,6 +10,7 @@ gem 'resque'
 
 gem 'headless'
 gem 'selenium-webdriver'
+gem 'rest-client'
 
 gem 'pg'
 gem 'otr-activerecord'
