@@ -39,6 +39,9 @@ module Jobs
         end
 
         @ssdb.set(cache_key, page_source)
+
+        STDOUT.puts("Enqueueing AbpnScraper with #{cache_key}")
+        Resque.push('scraper_abpn', :class => 'Jobs::Scrapers::AbpnScraper', :args => [cache_key])
       end
     end
   end
