@@ -6,6 +6,7 @@ require 'json'
 require_relative 'defaults'
 
 require 'otr-activerecord'
+require 'rest-client'
 
 OTR::ActiveRecord.configure_from_file! "config/database.yml"
 

@@ -22,6 +22,7 @@ namespace :payors do
           current_url = strategy.next_page(current_url)
         end
       end
+      Jobs::Crawlers::AbpnCrawler.enqueue_all
     end
   end
 end
