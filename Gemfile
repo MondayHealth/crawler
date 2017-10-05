@@ -14,3 +14,5 @@ gem 'rest-client'
 
 gem 'pg'
 gem 'otr-activerecord'
+
+gem 'retries'

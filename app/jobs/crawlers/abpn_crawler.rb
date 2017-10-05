@@ -33,7 +33,10 @@ module Jobs
           return if @ssdb.exists(cache_key)
         end
 
-        page_source = RestClient.post(URL, { selSpclty: specialty_original_id, selSt: state })
+        page_source = nil
+        with_retries(max_tries: 5, rescue: RestClient::Exception) do
+          page_source = RestClient.post(URL, { selSpclty: specialty_original_id, selSt: state })
+        end
 
         @ssdb.set(cache_key, page_source)
       end
