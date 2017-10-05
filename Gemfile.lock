@@ -58,6 +58,7 @@ GEM
     rest-client (1.6.8)
       mime-types (~> 1.16)
       rdoc (>= 2.4.2)
+    retries (0.0.5)
     rubyzip (1.2.1)
     selenium-webdriver (3.5.1)
       childprocess (~> 0.5)
@@ -88,6 +89,7 @@ DEPENDENCIES
   rake
   resque
   rest-client
+  retries
   selenium-webdriver
   ssdb
 
