@@ -1,4 +1,5 @@
 require_relative 'base'
+require "base64"
 
 module Jobs
   module Crawlers
@@ -16,9 +17,9 @@ module Jobs
 
       @queue = :crawler_abpn
 
-      def self.enqueue_all
+      def self.enqueue_all options={}
         SPECIALTIES.each_key do |specialty_name|
-          Resque.enqueue(Jobs::Crawlers::AbpnCrawler, specialty_name, STATE)
+          Resque.enqueue(Jobs::Crawlers::AbpnCrawler, specialty_name, STATE, options)
         end
       end
 
@@ -29,7 +30,7 @@ module Jobs
         cache_key = URL + "&selSpclty=#{specialty_original_id}&selSt=#{state}"
         
         # If the page has already been fetched, block unless we're force refreshing
-        unless options[:force_refresh]
+        unless options["force_refresh"]
           return if @ssdb.exists(cache_key)
         end
 
@@ -38,7 +39,7 @@ module Jobs
           page_source = RestClient.post(URL, { selSpclty: specialty_original_id, selSt: state })
         end
 
-        @ssdb.set(cache_key, page_source)
+        @ssdb.set(cache_key, sanitize_for_ssdb(page_source))
 
         STDOUT.puts("Enqueueing AbpnScraper with #{cache_key}")
         Resque.push('scraper_abpn', :class => 'Jobs::Scrapers::AbpnScraper', :args => [cache_key])
