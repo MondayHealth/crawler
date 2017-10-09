@@ -22,6 +22,14 @@ namespace :payors do
           current_url = strategy.next_page(current_url)
         end
       end
+    end
+  end
+end
+
+namespace :directories do
+  namespace :refresh do
+    desc "Refreshes directories with a full crawl"
+    task :crawl => ['db:environment'] do
       Jobs::Crawlers::AbpnCrawler.enqueue_all
     end
   end

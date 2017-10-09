@@ -11,7 +11,10 @@ module Jobs
 
         # If the page has already been fetched, block unless we're force refreshing
         unless options[:force_refresh]
-          return if @ssdb.exists(url)
+          if @ssdb.exists(url)
+            schedule_scrape(plan_id, url)
+            return
+          end
         end
 
         page_source = nil
@@ -41,11 +44,10 @@ module Jobs
 
               # we need to strip out tabs and newlines here since they mess with ssdb-rb's GET method
               # might as well get rid of extra space characters while we're at it
-              page_source = @driver.page_source.gsub("\n", " ").gsub("\t", " ").gsub(/\s+/, " ")
-              @ssdb.set(url, page_source)
+              page_source = @driver.page_source
+              @ssdb.set(url, sanitize_for_ssdb(page_source))
 
-              STDOUT.puts("Enqueueing AetnaScraper with [#{plan_id}, #{url}]")
-              Resque.push('scraper_aetna', :class => 'Jobs::Scrapers::AetnaScraper', :args => [plan_id, url])
+              schedule_scrape(plan_id, url)
             rescue Selenium::WebDriver::Error::NoSuchElementError => e
               STDOUT.puts("No results found for [#{plan_id}, #{url}]")
             end
@@ -56,6 +58,11 @@ module Jobs
             raise e
           end
         end
+      end
+      
+      def self.schedule_scrape plan_id, url
+        STDOUT.puts("Enqueueing AetnaScraper with [#{plan_id}, #{url}]")
+        Resque.push('scraper_aetna', :class => 'Jobs::Scrapers::AetnaScraper', :args => [plan_id, url])
       end
     end
   end
