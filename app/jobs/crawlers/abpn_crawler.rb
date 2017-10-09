@@ -31,7 +31,10 @@ module Jobs
         
         # If the page has already been fetched, block unless we're force refreshing
         unless options["force_refresh"]
-          return if @ssdb.exists(cache_key)
+          if @ssdb.exists(cache_key)
+            schedule_scrape(cache_key)
+            return
+          end
         end
 
         page_source = nil
@@ -41,6 +44,10 @@ module Jobs
 
         @ssdb.set(cache_key, sanitize_for_ssdb(page_source))
 
+        schedule_scrape(cache_key)
+      end
+
+      def self.schedule_scrape cache_key
         STDOUT.puts("Enqueueing AbpnScraper with #{cache_key}")
         Resque.push('scraper_abpn', :class => 'Jobs::Scrapers::AbpnScraper', :args => [cache_key])
       end
