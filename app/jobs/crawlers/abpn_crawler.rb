@@ -1,5 +1,4 @@
 require_relative 'base'
-require "base64"
 
 module Jobs
   module Crawlers
