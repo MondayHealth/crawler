@@ -5,11 +5,11 @@ module Jobs
     class GoodTherapyCrawler < Base
       URL = 'https://www.goodtherapy.org/search-service.html?ch&search[miles]=10&search[zipcode]=<CITY>&nonjs=1&search[p]=<PAGE>'
       PER_PAGE = 10
-      CITY = "New York City, NY"
 
       @queue = :crawler_good_therapy
 
-      def self.enqueue_all city, options={}
+      def self.enqueue_all options={}
+        city = "New York City, NY"
         search_url = URL.sub("<CITY>", URI.escape(city)).sub("<PAGE>", "1")
         response = RestClient.get(search_url)
         json = JSON.parse(response.body)
