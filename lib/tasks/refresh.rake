@@ -31,6 +31,7 @@ namespace :directories do
     desc "Refreshes directories with a full crawl"
     task :crawl => ['db:environment'] do
       Jobs::Crawlers::AbpnCrawler.enqueue_all
+      Jobs::Crawlers::GoodTherapyCrawler.enqueue_all
     end
   end
 end
