@@ -4,22 +4,15 @@ namespace :payors do
   namespace :refresh do
     desc "Refreshes payors with a full crawl"
     task :crawl => ['db:environment'] do
-      refresh('Jobs::Crawlers::AetnaCrawler', 'crawler_aetna')
+      refresh
     end
 
-    desc "Refreshes payors with cached data"
-    task :scrape => ['db:environment'] do
-      refresh('Jobs::Scrapers::AetnaScraper', 'scraper_aetna')
-    end
-
-    def refresh(job_class, queue_name)
+    def refresh
       Plan.find_each do |plan|
         strategy = plan.pagination_strategy
-        current_url = plan.url
-        while !strategy.hit_record_limit? current_url, plan.record_limit
-          STDOUT.puts("Enqueueing #{job_class} with [#{plan.id}, #{current_url}]")
-          Resque.push(queue_name, :class => job_class, :args => [plan.id, current_url])
-          current_url = strategy.next_page(current_url)
+        strategy.enqueue_all(plan) do |url|
+          STDOUT.puts("Enqueueing #{strategy.class.job_class} with [#{plan.id}, #{url}]")
+          Resque.push(strategy.class.queue_name, :class => strategy.class.job_class, :args => [plan.id, url])
         end
       end
     end
