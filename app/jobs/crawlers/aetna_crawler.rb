@@ -7,11 +7,10 @@ module Jobs
 
       def self.perform(plan_id, url, options={})
         @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
-        @ssdb = SSDB.new url: "ssdb://#{ENV['SSDB_HOST']}:#{ENV['SSDB_PORT']}"
 
         # If the page has already been fetched, block unless we're force refreshing
         unless options[:force_refresh]
-          if @ssdb.exists(url)
+          if self.ssdb.exists(url)
             schedule_scrape(plan_id, url)
             return
           end
@@ -45,7 +44,7 @@ module Jobs
               # we need to strip out tabs and newlines here since they mess with ssdb-rb's GET method
               # might as well get rid of extra space characters while we're at it
               page_source = @driver.page_source
-              @ssdb.set(url, sanitize_for_ssdb(page_source))
+              self.ssdb.set(url, sanitize_for_ssdb(page_source))
 
               schedule_scrape(plan_id, url)
             rescue Selenium::WebDriver::Error::NoSuchElementError => e

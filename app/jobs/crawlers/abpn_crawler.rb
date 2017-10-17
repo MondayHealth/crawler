@@ -23,14 +23,12 @@ module Jobs
       end
 
       def self.perform(specialty_name, state, options={})
-        @ssdb = SSDB.new url: "ssdb://#{ENV['SSDB_HOST']}:#{ENV['SSDB_PORT']}"
-
         specialty_original_id = SPECIALTIES[specialty_name.to_sym]
         cache_key = URL + "&selSpclty=#{specialty_original_id}&selSt=#{state}"
         
         # If the page has already been fetched, block unless we're force refreshing
         unless options["force_refresh"]
-          if @ssdb.exists(cache_key)
+          if self.ssdb.exists(cache_key)
             schedule_scrape(cache_key)
             return
           end
@@ -41,7 +39,7 @@ module Jobs
           page_source = RestClient.post(URL, { selSpclty: specialty_original_id, selSt: state })
         end
 
-        @ssdb.set(cache_key, sanitize_for_ssdb(page_source))
+        self.ssdb.set(cache_key, sanitize_for_ssdb(page_source))
 
         schedule_scrape(cache_key)
       end
