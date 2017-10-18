@@ -1,6 +1,6 @@
 GIT
   remote: https://eecde58368a7e9b25befe79b8fc86b29d3e94b0e:x-oauth-basic@github.com/MondayHealth/core.git
-  revision: e860b416b525155c2e0d1d6c1191e592fd84b210
+  revision: 861ff0dc9cf0c343cafa6d7d7086df0db60b287b
   specs:
     core (0.0.2)
       otr-activerecord (= 1.2.4)
@@ -31,7 +31,8 @@ GEM
     hashie-forbidden_attributes (0.1.1)
       hashie (>= 3.0)
     headless (2.3.1)
-    i18n (0.8.6)
+    i18n (0.9.0)
+      concurrent-ruby (~> 1.0)
     mime-types (1.25.1)
     minitest (5.10.3)
     mono_logger (1.1.0)
