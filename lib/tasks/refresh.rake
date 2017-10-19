@@ -3,7 +3,8 @@ require 'json'
 namespace :payors do
   desc "Refreshes payors with a full crawl"
   task :crawl => ['db:environment'] do
-    Plan.find_each do |plan|
+    query = ARGV[1].nil? ? Plan.all : Payor.find_by(name: ARGV[1]).plans
+    query.find_each do |plan|
       strategy = plan.pagination_strategy
       strategy.enqueue_all(plan) do |url|
         STDOUT.puts("Enqueueing #{strategy.class.job_class} with [#{plan.id}, #{url}]")
