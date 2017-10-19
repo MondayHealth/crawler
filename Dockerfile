@@ -25,4 +25,4 @@ COPY . ./
 
 ENV PRIVATE_GEM_OAUTH_TOKEN $private_gem_oauth_token
 
-RUN PRIVATE_GEM_OAUTH_TOKEN=$PRIVATE_GEM_OAUTH_TOKEN bundle install
+RUN PRIVATE_GEM_OAUTH_TOKEN=$PRIVATE_GEM_OAUTH_TOKEN bundle install --path /app/storage/vendor/bundle --binstubs /app/storage/vendor/bundle/bin 
