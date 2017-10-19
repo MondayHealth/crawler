@@ -28,7 +28,8 @@ module Monday
           SPECIALTIES.each_pair do |specialty_name, specialty_id|
             current_url = plan.url + "&search_id=#{specialty_id}&zip_code=#{ZIP}&distance=#{DISTANCE}&page_start_idx=0"
             response = RestClient.get(current_url)
-            total_results_match = response.body.match(/"totalResults":\s*([0-9]+)/)
+            body = Jobs::Crawlers::Base.to_utf8(response.body)
+            total_results_match = body.match(/"totalResults":\s*([0-9]+)/)
             if total_results_match
               record_limit = total_results_match[1].to_i
               while !self.hit_record_limit? current_url, record_limit
