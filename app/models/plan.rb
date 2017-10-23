@@ -9,6 +9,8 @@ class Plan < ActiveRecord::Base
       return Monday::Strategies::Pagination::United.new
     when 'Oxford'
       return Monday::Strategies::Pagination::Oxford.new
+    when 'Emblem'
+      return Monday::Strategies::Pagination::Emblem.new
     end
   end
 end
