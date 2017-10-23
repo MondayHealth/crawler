@@ -7,6 +7,8 @@ class Plan < ActiveRecord::Base
       return Monday::Strategies::Pagination::Oscar.new
     when 'United'
       return Monday::Strategies::Pagination::United.new
+    when 'Oxford'
+      return Monday::Strategies::Pagination::Oxford.new
     end
   end
 end
