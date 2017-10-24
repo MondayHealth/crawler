@@ -6,17 +6,36 @@ module Monday
     module Pagination
       class Cigna < Base
         PER_PAGE = 10
-        QUERY_STRING = "?searchCategoryCode=HSC01&consumerCode=HDC001&geolocation.city=New+York&geolocation.stateCode=NY&geolocation.formattedAddress=New+York%2C+NY%2C+USA&geolocation.latitude=40.7127753&geolocation.longitude=-74.0059728&geoLocation=&viewtype=list&action=searchProviders&searchLocation=New+York%2C+NY%2C+USA&medicalProductCode=<PRODUCT_CODE>"
+        QUERY_STRING = "?searchCategoryCode=HSC01&consumerCode=HDC001&geolocation.city=New+York&geolocation.stateCode=NY&geolocation.formattedAddress=New+York%2C+NY%2C+USA&geolocation.latitude=40.7127753&geolocation.longitude=-74.0059728&geoLocation=&viewtype=list&action=searchProviders&searchLocation=New+York%2C+NY%2C+USA&searchTermSource=typeAheadSuggestion&typeaheadDataGroupCode=HTAG08&typeaheadSuggestionCode=<SUGGESTION_CODE>&medicalProductCode=<PRODUCT_CODE>"
         PRODUCT_CODES = {
           "CIGNA HealthCare of New York, Inc." => "HMONY013",
           "PPO, Choice Fund PPO" => "PPO",
           "Open Access Plus, OA Plus, Choice Fund OA Plus" => "OAP"
+        }
+        SUGGESTIONS_CODES = {
+          "Addiction Psychology": "PAB",
+          "Child Psychology": "PJC",
+          "Psychiatry": "PCN", # same code for Counseling
+          "Psychiatry, Child & Adolescent": "PYC",
+          "Psychiatry, Forensic": "PYF",
+          "Psychiatry, Geriatric": "PGR",
+          "Psychology": "PPJ",
+          "Psychology, Neurological": "PNY",
+          "Social Work": "PSW"
         }
 
         @queue_name = 'crawler_cigna'
         @job_class = 'Jobs::Crawlers::CignaCrawler'
 
         def enqueue_all plan
+          SUGGESTIONS_CODES.values.each do |specialty_code|
+            enqueue_all_for_specialty plan, specialty_code do |url, options|
+              yield url, options
+            end
+          end
+        end
+
+        def enqueue_all_for_specialty plan, specialty_code
           @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
           page_source = nil
           Headless.ly do
@@ -33,13 +52,24 @@ module Monday
             host = plan.url.sub(uri.path, '')
 
             product_code = PRODUCT_CODES[plan.name]
-            search_url = host + action + QUERY_STRING.sub("<PRODUCT_CODE>", product_code)
+            search_url = host + action + QUERY_STRING.sub("<PRODUCT_CODE>", product_code).sub("<SUGGESTION_CODE>", specialty_code)
 
             @driver.navigate.to search_url
             scroll_container = nil
             @wait.until do
-              scroll_container = @driver.find_element(css: ".nfinite-scroll-container")
+              begin
+                scroll_container = @driver.find_element(css: ".nfinite-scroll-container")
+              rescue Selenium::WebDriver::Error::NoSuchElementError => e
+                # Are we on an empty results page?
+                @driver.find_element(xpath: "//p[contains(text(), 'found no results')]")
+                true
+              end
             end
+
+            if scroll_container.nil?
+              return # no results found
+            end
+
             search_url = scroll_container.attribute('data-nfinite-url')
             other_params = scroll_container.attribute('data-nfinite-other-params') + "&offset=0"
             record_limit = scroll_container.attribute('data-nfinite-total').to_i
