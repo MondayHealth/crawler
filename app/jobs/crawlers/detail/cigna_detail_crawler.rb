@@ -26,6 +26,7 @@ module Jobs
             headers = {}
             headers["cookie"] = options["cookie"]
             page_source = RestClient.get(url, headers)
+            puts page_source
           end
 
           self.ssdb.set(cache_key, sanitize_for_ssdb(page_source))
