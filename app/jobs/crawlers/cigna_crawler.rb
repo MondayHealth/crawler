@@ -1,4 +1,5 @@
 require_relative 'base'
+require 'selenium/webdriver/remote/server_error'
 
 module Jobs
   module Crawlers
@@ -17,13 +18,12 @@ module Jobs
         plan = Plan.find(plan_id)
         specialty_code = options["specialty_code"]
 
-        @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
+        @wait = Selenium::WebDriver::Wait.new(timeout: 20, ignore: [Selenium::WebDriver::Error::NoSuchElementError, Selenium::WebDriver::Error::ServerError])
         page_source = nil
         Headless.ly do
           @driver = Selenium::WebDriver.for :firefox
           @driver.navigate.to plan.url
           @wait.until do
-            sleep 2 # for some reason, this is 404-ing only on the server unless we sleep for a second
             location_field = @driver.find_element(id: "searchLocation")
           end
 
