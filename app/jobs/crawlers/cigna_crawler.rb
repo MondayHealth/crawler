@@ -17,7 +17,7 @@ module Jobs
         plan = Plan.find(plan_id)
         specialty_code = options["specialty_code"]
 
-        @wait = Selenium::WebDriver::Wait.new(timeout: 20, ignore: Selenium::WebDriver::Error::NoSuchElementError)
+        @wait = Selenium::WebDriver::Wait.new(timeout: 60, ignore: Selenium::WebDriver::Error::NoSuchElementError)
         page_source = nil
         Headless.ly do
           @driver = Selenium::WebDriver.for :firefox
