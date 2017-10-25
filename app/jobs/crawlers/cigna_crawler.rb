@@ -23,6 +23,7 @@ module Jobs
           @driver = Selenium::WebDriver.for :firefox
           @driver.navigate.to plan.url
           @wait.until do
+            sleep 2 # for some reason, this is 404-ing only on the server unless we sleep for a second
             location_field = @driver.find_element(id: "searchLocation")
           end
 
@@ -39,6 +40,7 @@ module Jobs
           @driver.navigate.to search_url
           scroll_container = nil
           @wait.until do
+            sleep 2 # for some reason, this is 404-ing only on the server unless we sleep for a second
             begin
               scroll_container = @driver.find_element(css: ".nfinite-scroll-container")
             rescue Selenium::WebDriver::Error::NoSuchElementError => e
