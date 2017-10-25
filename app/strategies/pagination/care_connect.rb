@@ -17,6 +17,7 @@ module Monday
               @driver.navigate.to url
               plan_link = nil
               @wait.until do
+                sleep 1
                 plan_link = @driver.find_element(xpath: "//a[contains(text(), 'CareConnect')]")
                 plan_link.enabled? && plan_link.displayed?
               end
