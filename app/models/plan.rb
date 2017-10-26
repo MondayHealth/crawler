@@ -13,6 +13,8 @@ class Plan < ActiveRecord::Base
       return Monday::Strategies::Pagination::Emblem.new
     when 'CareConnect'
       return Monday::Strategies::Pagination::CareConnect.new
+    when 'Cigna'
+      return Monday::Strategies::Pagination::Cigna.new
     end
   end
 end

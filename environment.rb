@@ -18,3 +18,7 @@ end
 Dir[File.join("app", "**/*.rb")].each do |file_path|
   require_relative file_path
 end
+
+if ENV["SELENIUM_DEBUG"]
+  Selenium::WebDriver.logger.level = :debug
+end
