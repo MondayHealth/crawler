@@ -20,6 +20,13 @@ module Jobs
       def self.ssdb
         @ssdb ||= SSDB.new url: "ssdb://#{ENV['SSDB_HOST']}:#{ENV['SSDB_PORT']}"
       end
+
+      def self.cookie_string
+        @cookies = @driver.manage.all_cookies
+        cookie_string = @cookies.map do |cookie|
+          "#{cookie[:name]}=#{cookie[:value]}"
+        end.join("; ")
+      end
     end
   end
 end
