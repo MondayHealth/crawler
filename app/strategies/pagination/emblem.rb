@@ -48,10 +48,6 @@ module Monday
                     end
                   end
                   true
-                rescue Selenium::WebDriver::Error::ServerError => e
-                  unless e.message =~ /404/
-                    raise e
-                  end
                 rescue Selenium::WebDriver::Error::NoSuchElementError => e
                   # Are we on an empty results page?
                   @driver.find_element(id: "noResultsSection")
