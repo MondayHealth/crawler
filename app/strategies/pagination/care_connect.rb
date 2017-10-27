@@ -64,6 +64,12 @@ module Monday
                 data["startIndex"] = data["pageSize"] + data["startIndex"].to_i
                 self.next_page!(options)
               end
+              
+              @driver.quit
+            rescue Exception => e
+              # Make sure we quit the browser even if we run into an exception we didn't anticipate
+              @driver.quit
+              raise e
             end
           end
         end

@@ -56,6 +56,12 @@ module Monday
 
                 @cookies = @driver.manage.all_cookies
               end
+
+              @driver.quit
+            rescue Exception => e
+              # Make sure we quit the browser even if we run into an exception we didn't anticipate
+              @driver.quit
+              raise e
             end
           end
 
