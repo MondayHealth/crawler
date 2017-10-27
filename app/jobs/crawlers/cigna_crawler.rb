@@ -57,12 +57,8 @@ module Jobs
           other_params = scroll_container.attribute('data-nfinite-other-params') + "&offset=0"
           record_limit = scroll_container.attribute('data-nfinite-total').to_i
 
-          @cookies = @driver.manage.all_cookies
-          cookie_string = @cookies.map do |cookie|
-            "#{cookie[:name]}=#{cookie[:value]}"
-          end.join("; ")
           options = {}
-          options["cookie"] = cookie_string
+          options["cookie"] = self.cookie_string
 
           current_url = host + search_url + "?" + other_params
           while !self.hit_record_limit? current_url, record_limit

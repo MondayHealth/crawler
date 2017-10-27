@@ -6,7 +6,7 @@ USER root
 
 RUN apt-get update
 
-RUN apt-get install -y libgtk-3-0 libdbusmenu-glib-dev libx11-xcb-dev xvfb postgresql postgresql-contrib
+RUN apt-get install -y libgtk-3-0 libdbusmenu-glib-dev libx11-xcb-dev xvfb postgresql postgresql-contrib emacs
 
 # firefox and geckodriver
 RUN wget 'https://ftp.mozilla.org/pub/firefox/releases/55.0/linux-x86_64/en-US/firefox-55.0.tar.bz2' \ 
