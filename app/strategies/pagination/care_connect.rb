@@ -8,7 +8,7 @@ module Monday
         PAGE_SIZE = 20
         AJAX_LIST_URL = 'https://www.providerlookuponline.com/Northshore/po7/Client_POWebService.asmx/GetProviders'
 
-        @queue_name = 'crawler_care_connectx'
+        @queue_name = 'crawler_care_connect'
         @job_class = 'Jobs::Crawlers::CareConnectCrawler'
 
         def enqueue_all plan
