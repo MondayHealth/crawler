@@ -19,5 +19,6 @@ namespace :directories do
   task :crawl => ['db:environment'] do
     Jobs::Crawlers::AbpnCrawler.enqueue_all
     Jobs::Crawlers::GoodTherapyCrawler.enqueue_all
+    Jobs::Crawlers::PsychologyTodayCrawler.enqueue_all
   end
 end
