@@ -48,6 +48,7 @@ module Monday
                 provider_count_container = @driver.find_element(css: ".providerCount")
               end
               record_limit = provider_count_container.attribute("innerHTML").to_i
+              STDOUT.puts("Found #{record_limit} results")
 
               current_url = AJAX_LIST_URL
               options = {}
