@@ -11,7 +11,7 @@ module Jobs
       # account for some expansion and accept that we'll waste some requests
       RECORD_LIMIT = 8000 
 
-      @queue = :crawler_good_therapy
+      @queue = :crawler_psychology_today
 
       def self.enqueue_all options={}
         @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
