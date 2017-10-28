@@ -11,6 +11,7 @@ gem 'resque'
 gem 'headless'
 gem 'selenium-webdriver'
 gem 'rest-client'
+gem 'nokogiri'
 
 gem 'pg'
 gem 'otr-activerecord'

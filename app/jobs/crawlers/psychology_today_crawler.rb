@@ -71,25 +71,22 @@ module Jobs
         # If the page has already been fetched, block unless we're force refreshing
         unless options[:force_refresh]
           if self.ssdb.exists(cache_key)
-            schedule_scrape(cache_key)
+            schedule_detail_crawl(cache_key)
             return
           end
         end
 
         headers = { "User-Agent": USER_AGENT_STRING, "Cookie": options["cookie"] }
         response = RestClient.get(url, headers)
-        page_source = response.body
-
-        puts page_source
-
-        self.ssdb.set(cache_key, sanitize_for_ssdb(page_source))
-
-        schedule_scrape(cache_key)
+        doc = Nokogiri::HTML.parse(response.body)
+        doc.css('.result-row').each do |div|
+          profile_url = div['data-profile-url']
+          schedule_detail_crawl(profile_url)
+        end
       end
 
-      def self.schedule_scrape cache_key
-        STDOUT.puts("Enqueueing PsychologyTodayScraper with #{cache_key}")
-        Resque.push('scraper_psychology_today', :class => 'Jobs::Scrapers::PsychologyTodayScraper', :args => [cache_key])
+      def self.schedule_detail_crawl url
+        Resque.enqueue(Jobs::Crawlers::Detail::PsychologyTodayDetailCrawler, url)
       end
 
     end
