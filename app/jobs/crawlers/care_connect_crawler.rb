@@ -4,8 +4,6 @@ require 'uri'
 module Jobs
   module Crawlers
     class CareConnectCrawler < Base
-      USER_AGENT_STRING = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36'
-
       @queue = :crawler_care_connect
 
       def self.perform(plan_id, url, options={})

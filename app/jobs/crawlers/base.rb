@@ -5,6 +5,8 @@ module Jobs
     class Base
       extend Jobs::Concerns::LoggedJob
 
+      USER_AGENT_STRING = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.62 Safari/537.36'
+
       def self.sanitize_for_ssdb html
         # need to convert to UTF-8 to avoid "invalid byte sequence in US-ASCII" errors
         to_utf8(html).gsub("\n", " ").gsub("\t", " ").gsub(/\s+/, " ")
