@@ -96,8 +96,10 @@ module Jobs
         end
 
         headers = { "User-Agent": USER_AGENT_STRING, "Cookie": options["cookie"] }
-        RestClient.proxy = "http://#{ENV['POLIPO_PROXY']}"
-        response = RestClient.get(url, headers)
+        response = nil
+        self.with_proxy do
+          response = RestClient.get(url, headers)
+        end
         doc = Nokogiri::HTML.parse(response.body)
         doc.css('.result-row').each do |div|
           profile_url = div['data-profile-url']

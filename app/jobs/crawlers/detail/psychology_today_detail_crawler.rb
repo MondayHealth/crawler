@@ -17,8 +17,10 @@ module Jobs
             end
           end
 
-          RestClient.proxy = "http://#{ENV['POLIPO_PROXY']}"
-          response = RestClient.get(detail_url)
+          response = nil
+          self.with_proxy do
+            response = RestClient.get(detail_url)
+          end
           page_source = response.body
 
           @ssdb.set(cache_key, sanitize_for_ssdb(page_source))
