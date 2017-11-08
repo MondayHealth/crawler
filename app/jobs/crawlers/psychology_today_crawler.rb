@@ -31,7 +31,10 @@ module Jobs
           caps.proxy = proxy
           caps['acceptInsecureCerts'] = true
 
-          @driver = Selenium::WebDriver.for :firefox, desired_capabilities: caps
+          client = Selenium::WebDriver::Remote::Http::Default.new
+          client.read_timeout = 180
+
+          @driver = Selenium::WebDriver.for :firefox, desired_capabilities: caps, http_client: client
           begin
             @driver.navigate.to URL
             search_field = nil
