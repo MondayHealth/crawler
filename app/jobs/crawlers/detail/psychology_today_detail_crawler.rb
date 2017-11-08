@@ -17,7 +17,7 @@ module Jobs
             end
           end
 
-          response = RestClient.get(detail_url)
+          response = RestClient::Request.execute(method: :get, url: detail_url, proxy: "http://#{ENV['POLIPO_PROXY']}")
           page_source = response.body
 
           @ssdb.set(cache_key, sanitize_for_ssdb(page_source))
