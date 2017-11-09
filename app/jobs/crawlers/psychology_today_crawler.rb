@@ -77,7 +77,6 @@ module Jobs
             @driver.quit
           rescue Exception => e
             # Make sure we quit the browser even if we run into an exception we didn't anticipate
-            STDOUT.puts @driver.page_source
             @driver.quit
             raise e  
           end
