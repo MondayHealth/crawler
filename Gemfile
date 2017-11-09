@@ -11,6 +11,7 @@ gem 'resque'
 gem 'headless'
 gem 'selenium-webdriver'
 gem 'rest-client'
+gem 'curb'
 gem 'nokogiri'
 
 gem 'pg'

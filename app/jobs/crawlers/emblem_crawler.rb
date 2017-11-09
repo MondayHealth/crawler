@@ -5,6 +5,8 @@ module Jobs
     class EmblemCrawler < Base
       @queue = :crawler_emblem
 
+      class UnsuccessfulLoadError < StandardError; end
+
       def self.perform(plan_id, url, options={})
         # tack the POST data onto the URL as a query param to make cache key unique
         cache_key = url + "?" + options["body"]
@@ -18,9 +20,16 @@ module Jobs
         end
 
         page_source = nil
-        with_retries(max_tries: 5, rescue: RestClient::Exception) do
+        with_retries(max_tries: 5, rescue: Curl::Err::CurlError) do
           http_referer = "https://www.valueoptions.com/referralconnect/providerSearch.do?nextpage=nextpage"
-          page_source = RestClient.post(url, options["body"], { "cookie": options["cookie"], "Referer": http_referer})
+          response = Curl::Easy.http_post(url, options["body"]) do |curl|
+            curl.headers['Cookie'] = options['cookie']
+            curl.headers['Referer'] = http_referer
+          end
+          unless response.response_code == 200
+            raise UnsuccessfulLoadError.new("Unsuccessful Load (#{response.response_code})")
+          end
+          page_source = response.body_str
         end
 
         self.ssdb.set(cache_key, sanitize_for_ssdb(page_source))
