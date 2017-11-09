@@ -7,6 +7,7 @@ require_relative 'defaults'
 
 require 'otr-activerecord'
 require 'rest-client'
+require 'curb'
 require 'nokogiri'
 require 'retries'
 
