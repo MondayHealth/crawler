@@ -68,7 +68,7 @@ module Monday
           DISCIPLINES.each do |discipline_list|
             SPECIALTY_GROUPS.each do |specialty_group_id|
               uri = URI.parse(plan.url)
-              body = uri.query + "&txtCity=New+York&listState=#{STATE}&listdiscipline=#{discipline_list}&listSpecialtyGroups=#{specialty_group_id}"
+              body = uri.query + "&txtCity=#{CITY.gsub(/\s/, '+')}&listState=#{STATE}&listdiscipline=#{discipline_list}&listSpecialtyGroups=#{specialty_group_id}&listMiles=#{DISTANCE}"
               current_url = uri.to_s.sub("?" + uri.query, '')
               options = {}
               options["body"] = body
