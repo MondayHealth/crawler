@@ -3,6 +3,7 @@ require_relative 'base'
 module Jobs
   module Crawlers
     class PsychologyTodayCrawler < Base
+      POLIPO_PROXY = ENV['POLIPO_PROXY']
       URL = 'https://therapists.psychologytoday.com/rms/'
       PER_PAGE = 20
 
@@ -11,12 +12,29 @@ module Jobs
       # account for some expansion and accept that we'll waste some requests
       RECORD_LIMIT = 8000 
 
-      @queue = :crawler_good_therapy
+      @queue = :crawler_psychology_today
 
       def self.enqueue_all options={}
-        @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
+        @wait = Selenium::WebDriver::Wait.new(timeout: 60) # seconds
         Headless.ly do
-          @driver = Selenium::WebDriver.for :firefox
+          caps = Selenium::WebDriver::Remote::Capabilities.firefox
+
+          profile = Selenium::WebDriver::Firefox::Profile.new
+          profile.secure_ssl = false
+          profile.assume_untrusted_certificate_issuer = false
+          caps.firefox_profile = profile
+          
+          proxy = Selenium::WebDriver::Proxy.new
+          proxy.http = POLIPO_PROXY
+          proxy.ftp = POLIPO_PROXY
+          proxy.ssl = POLIPO_PROXY
+          caps.proxy = proxy
+          caps['acceptInsecureCerts'] = true
+
+          client = Selenium::WebDriver::Remote::Http::Default.new
+          client.read_timeout = 180
+
+          @driver = Selenium::WebDriver.for :firefox, desired_capabilities: caps, http_client: client
           begin
             @driver.navigate.to URL
             search_field = nil
@@ -71,25 +89,25 @@ module Jobs
         # If the page has already been fetched, block unless we're force refreshing
         unless options[:force_refresh]
           if self.ssdb.exists(cache_key)
-            schedule_scrape(cache_key)
+            schedule_detail_crawl(cache_key)
             return
           end
         end
 
         headers = { "User-Agent": USER_AGENT_STRING, "Cookie": options["cookie"] }
-        response = RestClient.get(url, headers)
-        page_source = response.body
-
-        puts page_source
-
-        self.ssdb.set(cache_key, sanitize_for_ssdb(page_source))
-
-        schedule_scrape(cache_key)
+        response = nil
+        self.with_proxy do
+          response = RestClient.get(url, headers)
+        end
+        doc = Nokogiri::HTML.parse(response.body)
+        doc.css('.result-row').each do |div|
+          profile_url = div['data-profile-url']
+          schedule_detail_crawl(profile_url)
+        end
       end
 
-      def self.schedule_scrape cache_key
-        STDOUT.puts("Enqueueing PsychologyTodayScraper with #{cache_key}")
-        Resque.push('scraper_psychology_today', :class => 'Jobs::Scrapers::PsychologyTodayScraper', :args => [cache_key])
+      def self.schedule_detail_crawl url
+        Resque.enqueue(Jobs::Crawlers::Detail::PsychologyTodayDetailCrawler, url)
       end
 
     end

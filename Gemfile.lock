@@ -21,7 +21,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (8.0.0)
-    childprocess (0.7.1)
+    childprocess (0.8.0)
       ffi (~> 1.0, >= 1.0.11)
     concurrent-ruby (1.0.5)
     ffi (1.9.18)
@@ -34,10 +34,13 @@ GEM
     i18n (0.9.0)
       concurrent-ruby (~> 1.0)
     mime-types (1.25.1)
+    mini_portile2 (2.2.0)
     minitest (5.10.3)
     mono_logger (1.1.0)
     multi_json (1.12.1)
     mustermann (1.0.0)
+    nokogiri (1.8.0)
+      mini_portile2 (~> 2.2.0)
     otr-activerecord (1.2.4)
       activerecord (>= 4.0, < 5.2)
       hashie-forbidden_attributes (~> 0.1)
@@ -61,7 +64,7 @@ GEM
       rdoc (>= 2.4.2)
     retries (0.0.5)
     rubyzip (1.2.1)
-    selenium-webdriver (3.5.1)
+    selenium-webdriver (3.7.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
     sinatra (2.0.0)
@@ -85,6 +88,7 @@ DEPENDENCIES
   core!
   foreman
   headless
+  nokogiri
   otr-activerecord
   pg
   rake

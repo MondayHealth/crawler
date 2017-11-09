@@ -29,6 +29,13 @@ module Jobs
           "#{cookie[:name]}=#{cookie[:value]}"
         end.join("; ")
       end
+
+      def self.with_proxy
+        original_proxy = RestClient.proxy
+        RestClient.proxy = "http://#{ENV['POLIPO_PROXY']}"
+        yield
+        RestClient.proxy = original_proxy
+      end
     end
   end
 end
