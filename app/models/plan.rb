@@ -15,6 +15,8 @@ class Plan < ActiveRecord::Base
       return Monday::Strategies::Pagination::CareConnect.new
     when 'Cigna'
       return Monday::Strategies::Pagination::Cigna.new
+    when 'Empire Blue Cross Blue Shield'
+      return Monday::Strategies::Pagination::Empire.new
     end
   end
 end

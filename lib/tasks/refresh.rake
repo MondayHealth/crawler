@@ -5,11 +5,7 @@ namespace :payors do
   task :crawl => ['db:environment'] do
     query = ENV['PAYORS'] ? Payor.find_by(name: ENV['PAYORS']).plans : Plan.all
     query.find_each do |plan|
-      strategy = plan.pagination_strategy
-      strategy.enqueue_all(plan) do |url, options={}|
-        STDOUT.puts("Enqueueing #{strategy.class.job_class} with [#{plan.id}, #{url}, #{options.inspect}]")
-        Resque.push(strategy.class.queue_name, :class => strategy.class.job_class, :args => [plan.id, url, options])
-      end
+      Resque.enqueue(Monday::Jobs::Refresh, plan.id)
     end
   end
 end
