@@ -7,11 +7,20 @@ module Monday
         PER_PAGE = 10
 
         SPECIALTIES = {
-          "Neurology and Psychiatry": "170",
-          "Psychology - Clinical": "337",
-          "Licensed Professional Counselor": "321",
-          "Social Work": "341"
+          "Neurology and Psychiatry": "specialty=170",
+          "Psychology - Clinical": "specialty=337",
+          "Licensed Professional Counselor": "specialty=321",
+          "Social Work": "specialty=341"
         }
+
+        UNITED_COMMERCIAL_SPECIALTIES = {
+          "Psychiatrist (Physician)": "specialtyCategory=11",
+          "Psychologist": "specialtyCategory=12",
+          "Master Level Clinician": "specialtyCategory=13",
+          "Nurse Masters Level": "specialtyCategory=14",
+          "Telemental Health Providers": "areaOfExpertise=28&specialtyCategory=15"
+        }
+
         ZIP = "10104"
         DISTANCE = 10
 
@@ -41,8 +50,14 @@ module Monday
             end
           end
 
-          SPECIALTIES.each_pair do |specialty_name, specialty_id|
-            current_url = plan.url + "&zipCode=#{ZIP}&specialty=#{specialty_id}&distanceMiles=#{DISTANCE}"
+          specialties_for_plan = SPECIALTIES
+          if plan.payor.name == 'United'
+            specialties_for_plan = UNITED_COMMERCIAL_SPECIALTIES
+          end
+
+          specialties_for_plan.each_pair do |specialty_name, specialty_query_string|
+            current_url = plan.url + "&zipCode=#{ZIP}&distanceMiles=#{DISTANCE}"
+            current_url += "&" + specialty_query_string
             unless current_url.include?("from=")
               # just in case the seed data changes and the pagination param is no longer included
               current_url = current_url + "&from=0"
