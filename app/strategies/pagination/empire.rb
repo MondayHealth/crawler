@@ -69,13 +69,11 @@ module Monday
               @wait.until do
                 begin
                   results_count = @driver.find_element(css: "div[data-test='results-count-greater-than-one']")
+                  results_count_string = results_count.text
                 rescue Selenium::WebDriver::Error::NoSuchElementError => e
                   # Are we on an empty results page?
                   @driver.find_element(id: "results-container")
-                  true
                 end
-
-                results_count_string = results_count.text
                 true
               end
               @driver.quit
@@ -85,8 +83,12 @@ module Monday
               raise e
             end
 
-            results_count_match = results_count_string.match(/\s+of\s+([0-9,]+)\s+results/)
-            return results_count_match[1].gsub(',', '').to_i
+            if results_count_string
+              results_count_match = results_count_string.match(/\s+of\s+([0-9,]+)\s+results/)
+              return results_count_match[1].gsub(',', '').to_i
+            else
+              return 0
+            end
           end
         end
 
