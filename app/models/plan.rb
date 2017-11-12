@@ -6,7 +6,11 @@ class Plan < ActiveRecord::Base
     when 'Oscar'
       return Monday::Strategies::Pagination::Oscar.new
     when 'United'
-      return Monday::Strategies::Pagination::United.new
+      if self.name == 'Commercial'
+        return Monday::Strategies::Pagination::Oxford.new
+      else
+        return Monday::Strategies::Pagination::United.new
+      end
     when 'Oxford'
       return Monday::Strategies::Pagination::Oxford.new
     when 'Emblem'
