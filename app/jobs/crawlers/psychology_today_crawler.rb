@@ -63,7 +63,7 @@ module Jobs
               pagination_link = @driver.find_element(css: ".endresults-right a")
             end
             current_url = pagination_link.attribute("href")
-            current_url.sub(/rec_next=([0-9]*)/, "rec_next=1")
+            current_url.sub!(/rec_next=([0-9]*)/, "rec_next=1")
 
             options = {}
             options["cookie"] = self.cookie_string
@@ -71,7 +71,7 @@ module Jobs
             (RECORD_LIMIT/PER_PAGE).times do |page|
               STDOUT.puts("Enqueueing Jobs::Crawlers::PsychologyTodayCrawler with [#{current_url}, #{options.inspect}]")
               Resque.enqueue(Jobs::Crawlers::PsychologyTodayCrawler, current_url, options)
-              current_url.sub(/rec_next=([0-9]*)/) { "rec_next=#{Regexp.last_match[1].to_i + PER_PAGE}" }
+              current_url.sub!(/rec_next=([0-9]*)/) { "rec_next=#{Regexp.last_match[1].to_i + PER_PAGE}" }
             end
 
             @driver.quit
