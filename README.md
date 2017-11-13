@@ -10,6 +10,11 @@ You'll need to create a `.env` file in the root directory with the [environment 
 
     source .env
 
+## Rake Tasks for Refreshing Crawls
+
+    bundle exec rake payors:crawl
+    bundle exec rake directories:crawl
+
 ## Deploys
 
 New versions of the app are deployed by pushing to a remote dokku repository. 
@@ -50,4 +55,10 @@ To generate your own token, visit [this page](https://github.com/settings/tokens
 
 If you need to set up the private repository token on a fresh server, run the following from the root folder after setting the environment variable: 
 
-    dokku docker-options:add monday-scraper build '--build-arg private_gem_oauth_token=$PRIVATE_GEM_OAUTH_TOKEN'
+    dokku docker-options:add monday-crawler build '--build-arg private_gem_oauth_token=$PRIVATE_GEM_OAUTH_TOKEN'
+
+### Special Environment Variables for Debugging
+
+`SELENIUM_DEBUG`: When set to `1`, turns on debug logging for Selenium server. Useful when trying to figure out what's causing `Selenium::WebDriver::Error::ServerError` exceptions.
+
+`RESTCLIENT_LOG`: When set to `stdout`, turns on STDOUT logging for RestClient. Useful if you need to replay network requests.
