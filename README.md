@@ -4,6 +4,28 @@ The Crawler is a microservice that crawls payor directories and saves their cont
 
 When necessary, it runs a headless browser session through Firefox with [geckodriver](https://github.com/mozilla/geckodriver/) to simulate any user activities necessary.
 
+## Before You Start
+
+You'll need to create a `.env` file in the root directory with the [environment variables](#environment-variables) and then source them:
+
+    source .env
+
+## Deploys
+
+New versions of the app are deployed by pushing to a remote dokku repository. 
+
+### Set up the remote repository
+
+    git remote add dokku dokku@monday-crawler:monday-crawler
+
+### Deploy the master branch of the app
+
+    git push dokku master
+
+### Deploying another branch of the app
+
+    git push dokku branch-name:master
+
 ## The Crawl Process
 
 Crawls are kicked off for specific payors (e.g. Aetna) or directories (e.g. ABPN) with the tasks in `lib/tasks/refresh.rake`.
