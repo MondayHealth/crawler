@@ -15,6 +15,7 @@ module Monday
           "Psychiatrist specializing in pediatrics": "013",
           "Psychiatrist specializing in addiction problems": "002",
           "Psychiatrist specializing in geriatrics": "031",
+          "Psychiatrist": "102",
           "Psychologist": "103",
           "Social Worker": "109"
         }
