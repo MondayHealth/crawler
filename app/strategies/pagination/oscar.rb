@@ -1,4 +1,4 @@
-require_relative 'base'
+require_relative '../../jobs/crawlers/base'
 
 module Monday
   module Strategies
@@ -28,7 +28,7 @@ module Monday
           SPECIALTIES.each_pair do |specialty_name, specialty_id|
             current_url = plan.url + "&search_id=#{specialty_id}&zip_code=#{ZIP}&distance=#{DISTANCE}&page_start_idx=0"
             response = RestClient.get(current_url)
-            body = Jobs::Crawlers::Base.to_utf8(response.body)
+            body = ::Jobs::Crawlers::Base.to_utf8(response.body)
             total_results_match = body.match(/"totalResults":\s*([0-9]+)/)
             if total_results_match
               record_limit = total_results_match[1].to_i
