@@ -62,7 +62,6 @@ module Monday
               while data["startIndex"].to_i + data["pageSize"].to_i <= record_limit
                 yield current_url, options
                 data["startIndex"] = data["pageSize"] + data["startIndex"].to_i
-                self.next_page!(options)
               end
               
               @driver.quit
@@ -72,11 +71,6 @@ module Monday
               raise e
             end
           end
-        end
-
-        def next_page!(options)
-          data = options["data"]
-          data["startIndex"] = data["startIndex"].to_i + data["pageSize"].to_i
         end
       end
     end
