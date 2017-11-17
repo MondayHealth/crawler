@@ -3,7 +3,6 @@ require_relative 'base'
 module Jobs
   module Crawlers
     class PsychologyTodayCrawler < Base
-      POLIPO_PROXY = ENV['POLIPO_PROXY']
       URL = 'https://therapists.psychologytoday.com/rms/'
       PER_PAGE = 20
 
@@ -17,24 +16,7 @@ module Jobs
       def self.enqueue_all options={}
         @wait = Selenium::WebDriver::Wait.new(timeout: 60) # seconds
         Headless.ly do
-          caps = Selenium::WebDriver::Remote::Capabilities.firefox
-
-          profile = Selenium::WebDriver::Firefox::Profile.new
-          profile.secure_ssl = false
-          profile.assume_untrusted_certificate_issuer = false
-          caps.firefox_profile = profile
-          
-          proxy = Selenium::WebDriver::Proxy.new
-          proxy.http = POLIPO_PROXY
-          proxy.ftp = POLIPO_PROXY
-          proxy.ssl = POLIPO_PROXY
-          caps.proxy = proxy
-          caps['acceptInsecureCerts'] = true
-
-          client = Selenium::WebDriver::Remote::Http::Default.new
-          client.read_timeout = 180
-
-          @driver = Selenium::WebDriver.for :firefox, desired_capabilities: caps, http_client: client
+          @driver = Selenium::WebDriver.for_firefox_with_proxy
           begin
             @driver.navigate.to URL
             search_field = nil
