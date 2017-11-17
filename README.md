@@ -10,6 +10,10 @@ You'll need to create a `.env` file in the root directory with the [environment 
 
     source .env
 
+You'll also need to set your bundler config with a private Oauth token for Github. To generate your own token, visit [this page](https://github.com/settings/tokens) and click "Generate new token", then run the following from the root folder:
+
+    bundle config --local github.com $PRIVATE_GEM_OAUTH_TOKEN:x-oauth-basic
+
 ## Rake Tasks for Refreshing Crawls
 
     bundle exec rake payors:crawl
@@ -50,8 +54,6 @@ That data is then stored in SSDB, and a corresponding scraper job is queued up i
 `DATABASE_URL`: Used by ActiveRecord to connect to the Postgres server.
 
 `PRIVATE_GEM_OAUTH_TOKEN`: A Github x-oauth token used by Gemfile to pull private core repository with shared models, and passed to Docker with a custom build argument on deploy. 
-
-To generate your own token, visit [this page](https://github.com/settings/tokens) and click "Generate new token".
 
 If you need to set up the private repository token on a fresh server, run the following from the root folder after setting the environment variable: 
 
