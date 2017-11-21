@@ -32,6 +32,7 @@ module Monday
             end
             url += "&page=1"
             record_limit = fetch_record_limit(url)
+            STDOUT.puts "Found #{record_limit} results"
 
             current_url = url
 
@@ -51,7 +52,7 @@ module Monday
           url.scan(/page=([0-9]*)/) do 
             page = Regexp.last_match[1].to_i
           end
-          page * PER_PAGE > limit + 1
+          page * PER_PAGE > limit + PER_PAGE
         end
 
         def fetch_record_limit url
