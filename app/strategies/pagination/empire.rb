@@ -10,7 +10,7 @@ module Monday
 
         DISTANCE = 10
         PER_PAGE = 100
-        BASE_QUERY_STRING = '&alphaPrefix=&bcbsaProductId/results/acceptingNewPatients=false&alphaPrefix=&boardCertified=&hasExtendedHours=false&gender=&isEligiblePCP=false&maxLatitude=&maxLongitude=&minLatitude=&minLongitude=&name=&patientAgeRestriction=&patientGenderRestriction=&providerCategory=P&qualityRecognitions=&searchType=advanced&sort=DEFAULT&location=location=New%2520York%252C%2520NY'
+        BASE_QUERY_STRING = '&alphaPrefix=&bcbsaProductId/results/acceptingNewPatients=false&alphaPrefix=&boardCertified=&hasExtendedHours=false&gender=&isEligiblePCP=false&maxLatitude=&maxLongitude=&minLatitude=&minLongitude=&name=&patientAgeRestriction=&patientGenderRestriction=&providerCategory=P&qualityRecognitions=&searchType=advanced&sort=DEFAULT&location=New%2520York%252C%2520NY'
 
         # Each provider type maps to an optional list of specialty IDs, 
         # e.g. "Physicians specializing in Anxiety"
