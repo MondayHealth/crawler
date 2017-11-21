@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/MondayHealth/core.git
-  revision: f033e1b4d3278e9609e6613cab8a2bcbad3f8a51
+  revision: 1be4ebe8c6fc8e6be866df35246dcda16713fc62
   specs:
     core (0.0.2)
       otr-activerecord (= 1.2.4)
@@ -32,7 +32,7 @@ GEM
     hashie-forbidden_attributes (0.1.1)
       hashie (>= 3.0)
     headless (2.3.1)
-    i18n (0.9.0)
+    i18n (0.9.1)
       concurrent-ruby (~> 1.0)
     mime-types (1.25.1)
     mini_portile2 (2.2.0)
@@ -77,7 +77,7 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    tzinfo (1.2.3)
+    tzinfo (1.2.4)
       thread_safe (~> 0.1)
     vegas (0.1.11)
       rack (>= 1.0.0)
