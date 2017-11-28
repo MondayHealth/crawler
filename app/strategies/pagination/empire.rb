@@ -59,7 +59,7 @@ module Monday
 
         def fetch_record_limit url
           puts "Fetching record limit from #{url}"
-          @wait = Selenium::WebDriver::Wait.new(timeout: 60) # seconds
+          @wait = Selenium::WebDriver::Wait.new(timeout: 120) # seconds
           Headless.ly do
             results_count_string = nil
 
