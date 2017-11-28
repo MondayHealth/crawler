@@ -5,6 +5,8 @@ module Monday
     module Pagination
       class Empire < Base
 
+        class NoRecordLimitFoundError < Exception; end
+
         @queue_name = 'crawler_empire'
         @job_class = 'Jobs::Crawlers::EmpireCrawler'
 
@@ -57,18 +59,20 @@ module Monday
 
         def fetch_record_limit url
           puts "Fetching record limit from #{url}"
-          @wait = Selenium::WebDriver::Wait.new(timeout: 60) # seconds
+          @wait = Selenium::WebDriver::Wait.new(timeout: 120) # seconds
           Headless.ly do
             results_count_string = nil
 
             caps = Selenium::WebDriver::Remote::Capabilities.firefox
             caps['acceptInsecureCerts'] = true
+            page_source = nil
 
             @driver = Selenium::WebDriver.for :firefox, desired_capabilities: caps
             begin
               @driver.navigate.to url
               @wait.until do
                 begin
+                  page_source = @driver.page_source
                   results_count = @driver.find_element(css: "div[data-test='results-count-greater-than-one']")
                   results_count_string = results_count.text
                 rescue Selenium::WebDriver::Error::NoSuchElementError => e
@@ -85,10 +89,13 @@ module Monday
             end
 
             if results_count_string
+              puts "Found results_count_string: #{results_count_string}"
               results_count_match = results_count_string.match(/\s+of\s+([0-9,]+)\s+results/)
               return results_count_match[1].gsub(',', '').to_i
             else
-              return 0
+              STDOUT.puts "Error searching for record limit"
+              STDOUT.puts page_source.gsub("\n", " ")
+              raise NoRecordLimitFoundError.new("No record limit found for URL")
             end
           end
         end
