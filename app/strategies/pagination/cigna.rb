@@ -8,7 +8,8 @@ module Monday
         SUGGESTIONS_CODES = {
           "Addiction Psychology": "PAB",
           "Child Psychology": "PJC",
-          "Psychiatry": "PCN", # same code for Counseling
+          "Counseling": "PCN",
+          "Psychiatry": "PPY",
           "Psychiatry, Child & Adolescent": "PYC",
           "Psychiatry, Forensic": "PYF",
           "Psychiatry, Geriatric": "PGR",
