@@ -5,6 +5,7 @@ module Jobs
     class OxfordCrawler < Base
 
       class MissingSessionError < Exception; end
+      class NoJSONError < Exception; end
       
       @queue = :crawler_oxford
 
@@ -28,6 +29,13 @@ module Jobs
           headers["cookie"] = "#{options["session_key"]}=#{options["session_id"]}"
           headers["referer"] = "https://connect.werally.com/"
           page_source = RestClient.get(url, headers)
+        end
+
+        # scraper expects JSON—if we get HTML (e.g. if banned) fail here first
+        begin 
+          json = JSON.parse(page_source)
+        rescue JSON::ParserError
+          raise NoJSONError.new("Unexpected page response (not JSON) from #{url}")
         end
 
         self.ssdb.set(cache_key, sanitize_for_ssdb(page_source))
