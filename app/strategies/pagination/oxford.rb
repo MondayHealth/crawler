@@ -33,7 +33,7 @@ module Monday
         def enqueue_all plan
           @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
           Headless.ly do
-            @driver = Selenium::WebDriver.for :firefox
+            @driver = Selenium::WebDriver.for_firefox_with_proxy
             begin
               url = "https://connect.werally.com/plans/oxhp"
               @driver.navigate.to url
