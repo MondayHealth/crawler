@@ -33,11 +33,12 @@ module Monday
         def enqueue_all plan
           @wait = Selenium::WebDriver::Wait.new(timeout: 20) # seconds
           Headless.ly do
-            @driver = Selenium::WebDriver.for_firefox_with_proxy
+            @driver = Selenium::WebDriver.for :firefox
             begin
               url = "https://connect.werally.com/plans/oxhp"
               @driver.navigate.to url
               @wait.until do
+                # @driver.find_element(id: "mainContent")
                 cookie = @driver.manage.all_cookies.find { |c| c[:name].include?("incap_ses_") }
                 @session_key = cookie[:name]
                 @session_id = cookie[:value]
@@ -66,6 +67,7 @@ module Monday
             headers = {}
             headers["cookie"] = "#{@session_key}=#{@session_id}"
             headers["referer"] = "https://connect.werally.com/"
+            headers["user-agent"] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
             response = RestClient.get(current_url, headers)
             json = JSON.parse(response)
             record_limit = json["total"]
