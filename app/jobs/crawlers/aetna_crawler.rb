@@ -20,6 +20,12 @@ module Jobs
         Headless.ly do
           @driver = Selenium::WebDriver.for :firefox
           begin
+            @driver.navigate.to "http://www.aetna.com/dse/search?site_id=dse&langPref=en"
+            @wait.until do
+              @driver.find_element(tag_name: "body")
+            end
+            @driver.execute_script("window.open()")
+            @driver.switch_to.window(@driver.window_handles.last)
             @driver.navigate.to url
             @wait.until do
               begin
