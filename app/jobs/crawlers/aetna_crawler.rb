@@ -18,7 +18,7 @@ module Jobs
 
         page_source = nil
         Headless.ly do
-          @driver = Selenium::WebDriver.for :firefox
+          @driver = Selenium::WebDriver.for_firefox_with_proxy
           begin
             @driver.navigate.to "http://www.aetna.com/dse/search?site_id=dse&langPref=en"
             @wait.until do
