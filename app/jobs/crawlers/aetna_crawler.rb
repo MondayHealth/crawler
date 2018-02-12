@@ -22,7 +22,8 @@ module Jobs
           begin
             @driver.navigate.to "http://www.aetna.com/dse/search?site_id=dse&langPref=en"
             @wait.until do
-              @driver.find_element(tag_name: "body")
+              @driver.find_element(id: "searchType")
+              sleep 2
             end
             @driver.execute_script("window.open()")
             @driver.switch_to.window(@driver.window_handles.last)
@@ -59,6 +60,7 @@ module Jobs
             @driver.quit
           rescue Exception => e
             # Make sure we quit the browser even if we run into an exception we didn't anticipate
+            puts @driver.page_source
             @driver.quit
             raise e
           end
